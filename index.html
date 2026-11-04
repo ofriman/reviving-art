@@ -3,103 +3,61 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f7f5ef">
-  <meta name="description" content="reviving. – החיים הנצחיים של העלים הנושרים. סטודיו לשימור בוטני וסדנאות יצירה בטבע.">
+  <meta name="description" content="סטודיו לאמנות בוטנית השומר על המבנה השלדי המורכב של העלים והופך אותם ליצירות קיר יוקרתיות ונצחיות.">
   <title>reviving. | החיים הנצחיים של העלים הנושרים</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --paper: #f7f5ef; --ink: #34372d; --muted: #77796c;
-      --green: #727b5e; --line: #deded2; --white: #fffefa;
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body { margin: 0; background: var(--paper); color: var(--ink); font-family: Heebo, sans-serif; line-height: 1.85; }
-    a { color: inherit; }
-    .topline { height: 5px; background: linear-gradient(90deg,#a8aa8c,#d8cbb2,#8e9977); }
-    header { text-align: center; padding: 58px 20px 38px; }
-    .brand { margin: 0; font-family: "Playfair Display", serif; font-size: clamp(3.3rem, 8vw, 5.7rem); font-weight: 400; letter-spacing: .035em; line-height: 1.05; }
-    .tagline { color: var(--muted); font-size: 1rem; letter-spacing: .06em; margin: 15px 0 25px; }
-    .ornament { color: #9a9d83; letter-spacing: .5em; font-size: 13px; }
-    main { width: min(100% - 40px, 1040px); margin: auto; }
-    section { padding: 58px 0; border-top: 1px solid var(--line); }
-    .quote { text-align: center; padding: 28px 10px 54px; border: 0; }
-    .quote blockquote { margin: 0; font-size: clamp(1.15rem, 3vw, 1.65rem); font-weight: 300; }
-    .quote small { color: var(--muted); display: block; margin-top: 9px; }
-    h2 { text-align: center; font-weight: 400; font-size: 1.85rem; margin: 0 0 35px; letter-spacing: .04em; }
-    h2:after { content: ""; display: block; width: 42px; height: 1px; background: var(--green); margin: 13px auto 0; }
-    .vision { display: grid; grid-template-columns: minmax(220px, .78fr) 1.4fr; align-items: center; gap: clamp(28px, 6vw, 75px); max-width: 850px; margin: auto; }
-    .portrait-wrap { text-align: center; }
-    .portrait { width: min(100%, 285px); aspect-ratio: 4/5; object-fit: cover; border-radius: 48% 48% 5px 5px; display: block; margin: auto; background: #e8e5da; }
-    .vision-copy { font-size: 1.03rem; font-weight: 300; }
-    .vision-copy p { margin: 0 0 17px; }
-    .gallery { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
-    figure { margin: 0; text-align: center; }
-    .art { width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block; background: #e8e5da; border-radius: 3px; transition: transform .35s ease, box-shadow .35s ease; }
-    figure a:hover .art { transform: translateY(-4px); box-shadow: 0 12px 28px #34372d18; }
-    figcaption { padding-top: 12px; font-family: "Playfair Display", serif; font-size: 1.08rem; direction: ltr; }
-    .gallery-link { display: table; margin: 35px auto 0; text-decoration: none; border-bottom: 1px solid var(--green); padding: 5px 2px; color: var(--green); }
-    .contact { text-align: center; }
-    .contact p { margin: 8px 0; }
-    .contact a { text-decoration: none; color: var(--green); border-bottom: 1px solid #bfc3b1; }
-    footer { text-align: center; padding: 25px 15px 35px; color: var(--muted); font-size: .85rem; }
-    @media (max-width: 700px) {
-      header { padding-top: 42px; }
-      section { padding: 43px 0; }
-      .vision { grid-template-columns: 1fr; gap: 25px; }
-      .portrait { width: min(68%, 250px); }
-      .gallery { grid-template-columns: repeat(2,1fr); gap: 22px 14px; }
-      .vision-copy { text-align: right; }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="topline"></div>
-  <header>
-    <h1 class="brand">reviving.</h1>
+  <header class="hero">
+    <h1>reviving.</h1>
     <p class="tagline">החיים הנצחיים של העלים הנושרים</p>
-    <div class="ornament">✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦ ✦</div>
   </header>
 
   <main>
-    <section class="quote">
-      <blockquote>״וְעָלֵהוּ לֹא יִבּוֹל וְכֹל אֲשֶׁר יַעֲשֶׂה יַצְלִיחַ״</blockquote>
-      <small>תהילים פרק א׳</small>
-    </section>
-
-    <section id="vision">
+    <section id="vision" class="section">
       <h2>החזון</h2>
-      <div class="vision">
-        <div class="portrait-wrap">
-          <img class="portrait" src="images/yarden.jpg" alt="ירדנה בן יוסף" onerror="this.style.visibility='hidden'">
-        </div>
-        <div class="vision-copy">
-          <p>שמי ירדנה, בת 32. עברתי מתל אביב לפרדס חנה כרכור לפני חודש, עם חזון לעשות סדנאות לילדים והורים בעלים יבשים. הרעיון התחיל מאהבה טהורה ואמיתית לכל הצומח והרצון להחיות עלים שנשרו מהעץ וכך להחזיר אהבה לטבע ולשמר אותו.</p>
-          <p>הרעיון העיקרי הוא ליצור חיבור בין האדם לטבע. הסדנאות מפתחות את האהבה לטבע, ליצירתיות ולביטוי העצמי, עוזרות בפריקת רגשות ואנרגיה ומטעינות אותנו באנרגיה חיובית.</p>
-          <p>כמו כל עבודת אמנות, הילד והמבוגר מביאים את עצמם לידי ביטוי, מכניסים כוונות ליצירה ואת האנרגיה שהיו רוצים שתלווה אותם בתהליך. בתהליך מדהים בשתי מפגשים אני מזמינה אתכם, הורים וילדים, לחוויה מעצימה ומחזקת שתחבר אתכם קודם כל לעצמכם, לילדיכם ולטבע.</p>
-        </div>
-      </div>
+      <img class="portrait" src="images/yarden.jpg" alt="ירדנה בן יוסף">
+      <p>שמי ירדנה, בת 32. עברתי מתל אביב לפרדס חנה כרכור לפני חודש, עם חזון לעשות סדנאות לילדים והורים בעלים יבשים. הרעיון התחיל מאהבה טהורה ואמיתית לכל הצומח והרצון להחיות עלים שנשרו מהעץ וכך להחזיר אהבה לטבע ולשמר אותו.</p>
+      <p>הרעיון העיקרי הוא ליצור חיבור בין האדם לטבע. הסדנאות מפתחות את האהבה לטבע, ליצירתיות ולביטוי העצמי, עוזרות בפריקת רגשות ואנרגיה ומטעינות אותנו באנרגיה חיובית.</p>
+      <p>כמו כל עבודת אמנות, הילד והמבוגר מביאים את עצמם לידי ביטוי, מכניסים כוונות ליצירה ואת האנרגיה שהיו רוצים שתלווה אותם בתהליך. בתהליך מדהים בשני מפגשים אני מזמינה אתכם, הורים וילדים, לחוויה מעצימה ומחזקת שתחבר אתכם קודם כל לעצמכם, לילדיכם ולטבע.</p>
     </section>
 
-    <section id="gallery">
+    <section id="gallery" class="section">
       <h2>גלריה</h2>
       <div class="gallery">
-        <figure><a href="images/arcobaleno.jpg" target="_blank"><img class="art" src="images/arcobaleno.jpg" alt="Arcobaleno"></a><figcaption>Arcobaleno MMXXV</figcaption></figure>
-        <figure><a href="images/prisma.jpg" target="_blank"><img class="art" src="images/prisma.jpg" alt="Prisma"></a><figcaption>Prisma MMXXV</figcaption></figure>
-        <figure><a href="images/ambra.jpg" target="_blank"><img class="art" src="images/ambra.jpg" alt="Ambra"></a><figcaption>Ambra MMXXV</figcaption></figure>
-        <figure><a href="images/perla.jpg" target="_blank"><img class="art" src="images/perla.jpg" alt="Perla"></a><figcaption>Perla MMXXV</figcaption></figure>
+        <figure>
+          <img src="images/arcobaleno.jpg" alt="Arcobaleno - עבודת אמנות מעלים יבשים" loading="lazy">
+          <figcaption>ArcobalenoMMXXV</figcaption>
+        </figure>
+        <figure>
+          <img src="images/prisma.jpg" alt="Prisma - עבודת אמנות מעלים יבשים" loading="lazy">
+          <figcaption>PrismaMMXXV</figcaption>
+        </figure>
+        <figure>
+          <img src="images/ambra.jpg" alt="Ambra - עבודת אמנות מעלים יבשים" loading="lazy">
+          <figcaption>AmbraMMXXV</figcaption>
+        </figure>
+        <figure>
+          <img src="images/perla.jpg" alt="Perla - עבודת אמנות מעלים יבשים" loading="lazy">
+          <figcaption>PerlaMMXXV</figcaption>
+        </figure>
       </div>
-      <a class="gallery-link" href="mailto:yarden.ben.yosef@gmail.com?subject=בקשה%20לצפייה%20בגלריה%20המלאה">לכל הגלריה</a>
     </section>
 
-    <section id="contact" class="contact">
+    <section id="contact" class="section">
       <h2>ליצירת קשר</h2>
-      <p><a href="mailto:yarden.ben.yosef@gmail.com">yarden.ben.yosef@gmail.com</a></p>
-      <p><a href="tel:+972555564471">055-5564471</a></p>
+      <ul class="contact">
+        <li><a href="mailto:yarden.ben.yosef@gmail.com">yarden.ben.yosef@gmail.com</a></li>
+        <li><a href="tel:+972555564471" dir="ltr">055-5564471</a></li>
+      </ul>
     </section>
   </main>
-  <footer>© reviving. סטודיו לשימור בוטני</footer>
+
+  <footer class="footer">
+    <p>&copy; reviving. כל הזכויות שמורות</p>
+  </footer>
 </body>
 </html>
