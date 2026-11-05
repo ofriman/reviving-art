@@ -1,17 +1,12 @@
-# reviving.
+# reviving — עדכון אתר
 
-סטודיו לאמנות בוטנית - יצירות קיר מעלים יבשים.
+החבילה מכילה `index.html` ו-`styles.css` לשימוש כאתר סטטי.
 
-Static site (HTML + CSS). No build step.
+## עדכון המאגר
+1. חלצו את ה-ZIP.
+2. העלו את שני הקבצים לתיקיית השורש של `ofriman/reviving-art`.
+3. החליפו את `index.html` הקיים והוסיפו את `styles.css`.
+4. בצעו Commit. אם Cloudflare Pages מחובר למאגר, הפרסום יתעדכן אוטומטית.
 
-## Structure
-
-```
-index.html   - page content
-styles.css   - styling
-images/      - photos (see images/README.md)
-```
-
-## Deploy
-
-Cloudflare Pages: connect this repo, leave the build command empty, set the output directory to `/`.
+## תמונות
+התמונות מקושרות כרגע ישירות לכתובות המקוריות באתר Lovable. אם הכתובות יפסיקו לעבוד, יש להוריד את התמונות לתיקיית `images` ולעדכן את נתיבי `src` ב-HTML. השחזור מבוסס על התוכן והנראות של האתר הציבורי; ייתכנו הבדלים קטנים בריווח ובפרטי העיצוב לעומת המקור.
