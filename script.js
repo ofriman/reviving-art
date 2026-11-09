@@ -159,4 +159,95 @@
       if (e.key === "Escape") closeLightbox();
     });
   }
+
+  /* ---------- custom creation studio ---------- */
+  var createFrame = document.querySelector("[data-create-preview]");
+  if (createFrame) {
+    var CREATE_BG = {
+      cream:    { fill: "#f4eddd", label: "קרם בהיר" },
+      white:    { fill: "#ffffff", label: "לבן" },
+      bordeaux: { fill: "#5e2b2b", label: "בורדו" },
+      black:    { fill: "#14100c", label: "שחור" }
+    };
+    var CREATE_COLORS = {
+      gold:    { fill: "#d19a2a", label: "זהב" },
+      silver:  { fill: "#b8b8c2", label: "כסף" },
+      natural: { fill: "#7d8b5e", label: "טבעי" },
+      mixed:   { fill: null,      label: "מעורב" }
+    };
+    var MIXED_SEQUENCE = ["#d19a2a", "#b8b8c2", "#7d8b5e"];
+    var CREATE_LAYOUTS = {
+      3: [ { x: 200, y: 250, r: 0,   s: 1.5 },
+           { x: 128, y: 138, r: -24, s: 1.0 },
+           { x: 282, y: 366, r: 28,  s: 1.0 } ],
+      5: [ { x: 200, y: 130, r: -8,  s: 1.1 },
+           { x: 116, y: 244, r: 24,  s: 1.1 },
+           { x: 284, y: 250, r: -28, s: 1.1 },
+           { x: 168, y: 372, r: 14,  s: 1.1 },
+           { x: 264, y: 376, r: -16, s: 0.85 } ],
+      7: [ { x: 200, y: 110, r: -6,  s: 1.0 },
+           { x: 112, y: 190, r: 26,  s: 0.95 },
+           { x: 288, y: 196, r: -26, s: 0.95 },
+           { x: 200, y: 268, r: 4,   s: 1.15 },
+           { x: 122, y: 340, r: -18, s: 0.9 },
+           { x: 282, y: 346, r: 20,  s: 0.9 },
+           { x: 200, y: 420, r: -4,  s: 0.8 } ]
+    };
+    var LEAF_BODY = "M50 4 C74 28 78 66 50 96 C22 66 26 28 50 4 Z";
+    var LEAF_VEIN = "M50 14 L50 86";
+    var createState = { bg: "cream", color: "gold", count: "5" };
+    var createSend = document.querySelector("[data-create-send]");
+
+    function leafFill(index) {
+      if (createState.color === "mixed") return MIXED_SEQUENCE[index % MIXED_SEQUENCE.length];
+      return CREATE_COLORS[createState.color].fill;
+    }
+
+    function renderCreate() {
+      var bg = CREATE_BG[createState.bg].fill;
+      var layout = CREATE_LAYOUTS[createState.count];
+      var parts = [];
+      parts.push('<svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="הדמיית יצירה">');
+      parts.push('<rect width="400" height="500" fill="' + bg + '"/>');
+      parts.push('<rect x="14" y="14" width="372" height="472" fill="none" stroke="rgba(143,94,15,0.35)" stroke-width="2"/>');
+      for (var i = 0; i < layout.length; i++) {
+        var L = layout[i];
+        var fill = leafFill(i);
+        var vein = createState.bg === "black" || createState.bg === "bordeaux" ? "rgba(244,237,221,0.55)" : "rgba(90,61,11,0.4)";
+        parts.push('<g transform="translate(' + L.x + ' ' + L.y + ') rotate(' + L.r + ') scale(' + L.s + ') translate(-50 -50)">');
+        parts.push('<path d="' + LEAF_BODY + '" fill="' + fill + '" fill-opacity="0.92" stroke="rgba(90,61,11,0.25)" stroke-width="1.5"/>');
+        parts.push('<path d="' + LEAF_VEIN + '" fill="none" stroke="' + vein + '" stroke-width="2" stroke-linecap="round"/>');
+        parts.push('</g>');
+      }
+      parts.push('</svg>');
+      createFrame.innerHTML = parts.join("");
+
+      if (createSend) {
+        var msg = "שלום ירדנה, אשמח ליצירה בהזמנה אישית:\n" +
+          "רקע: " + CREATE_BG[createState.bg].label + "\n" +
+          "צבע עלים: " + CREATE_COLORS[createState.color].label + "\n" +
+          "מספר עלים: " + createState.count + "\n" +
+          "(התמונה באתר להמחשה בלבד — אשמח לשמוע פרטים)";
+        createSend.href = "https://wa.me/972555564471?text=" + encodeURIComponent(msg).replace(/%20/g, "+");
+      }
+    }
+
+    var groups = document.querySelectorAll("[data-create-group]");
+    Array.prototype.forEach.call(groups, function (group) {
+      var key = group.getAttribute("data-create-group");
+      group.addEventListener("click", function (e) {
+        var chip = e.target.closest(".create-chip");
+        if (!chip) return;
+        createState[key] = chip.getAttribute("data-value");
+        var chips = group.querySelectorAll(".create-chip");
+        Array.prototype.forEach.call(chips, function (c) {
+          c.setAttribute("aria-pressed", c === chip ? "true" : "false");
+        });
+        renderCreate();
+      });
+    });
+
+    renderCreate();
+  }
+
 })();
