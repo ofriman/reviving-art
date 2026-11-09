@@ -299,21 +299,30 @@ main { position: relative; z-index: 2; }
 
 /* contact */
 .section-contact { padding-bottom: 100px; }
-.contact-links {
-  max-width: 700px;
+.contact-buttons {
   display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
-.contact-links a {
-  display: block;
+.contact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.9rem 1.75rem;
+  border: 1px solid rgba(143, 94, 15, 0.4);
   color: var(--gold);
-  font-size: 1.1rem;
-  border-bottom: 1px solid rgba(143, 94, 15, 0.4);
-  padding-bottom: 0.75rem;
-  transition: color 0.4s, border-color 0.4s;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  transition: color 0.3s, border-color 0.3s, transform 0.3s;
 }
-.contact-links a:hover { color: var(--gold-bright); border-color: var(--gold); }
+.contact-btn:hover {
+  color: var(--gold-bright);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+.contact-btn svg { flex-shrink: 0; }
 
 .footer {
   padding: 100px 1rem 2.5rem;
@@ -426,7 +435,6 @@ main { position: relative; z-index: 2; }
   .section-contact { padding-bottom: 180px; }
   .collection-grid { gap: 1.5rem; }
   .vision-text p { font-size: 1.35rem; }
-  .contact-links a { font-size: 1.25rem; }
   .gallery-page { padding: 6rem 6%; }
   .gallery-header { margin-bottom: 6rem; }
   .gallery-logo { font-size: 2rem; }
