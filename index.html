@@ -141,10 +141,15 @@
               <button type="button" class="create-chip" data-value="scattered" aria-pressed="true">מפוזר</button>
               <button type="button" class="create-chip" data-value="central" aria-pressed="false">מרכזי</button>
               <button type="button" class="create-chip" data-value="diagonal" aria-pressed="false">אלכסון</button>
+              <span class="create-free-indicator" data-free-indicator role="status" hidden>חופשי</span>
             </div>
           </div>
           <div class="create-group create-rotate-group" data-rotate-group hidden>
-            <h3 class="create-label">סיבוב עלה נבחר</h3>
+            <h3 class="create-label">העלה הנבחר</h3>
+            <div class="leaf-dimensions">
+              <label>רוחב <output>100%</output><input type="range" min="60" max="150" value="100" data-leaf-dimension="0" aria-label="רוחב העלה הנבחר"></label>
+              <label>אורך <output>100%</output><input type="range" min="60" max="150" value="100" data-leaf-dimension="1" aria-label="אורך העלה הנבחר"></label>
+            </div>
             <div class="create-chips" role="group" aria-label="סיבוב עלה נבחר">
               <button type="button" class="create-chip" data-rotate="-15" aria-label="סיבוב שמאלה">&#8634;</button>
               <button type="button" class="create-chip" data-rotate="15" aria-label="סיבוב ימינה">&#8635;</button>
@@ -158,7 +163,7 @@
         </div>
         <figure class="create-preview">
           <div class="create-frame" data-create-preview aria-label="תצוגה מקדימה להמחשה"></div>
-          <figcaption class="create-note">אפשר לגרור את העלים ולסדר אותם מחדש, ולסובב עלה נבחר עם החצים. התצוגה להמחשה בלבד. היצירה הסופית נעשית בעלים אמיתיים בעבודת יד, ותעוצב אישית מול ירדנה.</figcaption>
+          <figcaption class="create-note">נוגעים בעלה כדי לשנות רוחב, אורך, צבע וסיבוב. אפשר לגרור את העלים ולסדר אותם מחדש, ולסובב עלה נבחר עם החצים. התצוגה להמחשה בלבד. היצירה הסופית נעשית בעלים אמיתיים בעבודת יד, ותעוצב אישית מול ירדנה.</figcaption>
         </figure>
       </div>
     </section>
