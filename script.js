@@ -232,6 +232,18 @@
              { x: 324, y: 76,  r: -34, s: 0.85 } ]
       } }
     };
+    /* Extend the same illustrative arrangements to every count from 1 to 8.
+       Existing 3/5/7 layouts stay unchanged. */
+    Object.keys(CREATE_ARRANGEMENTS).forEach(function (key) {
+      var layouts = CREATE_ARRANGEMENTS[key].layouts;
+      layouts[1] = [{ x: 200, y: 250, r: key === "diagonal" ? -22 : 0, s: 1.6 }];
+      layouts[2] = key === "central" ? [layouts[1][0], { x: 290, y: 120, r: 18, s: 0.9 }] :
+        [{ x: 135, y: 340, r: -18, s: 1.25 }, { x: 265, y: 160, r: key === "diagonal" ? -26 : 22, s: 1.25 }];
+      layouts[4] = layouts[5].slice(0, 4);
+      layouts[6] = layouts[7].slice(0, 6);
+      layouts[8] = layouts[7].concat([key === "central" ? { x: 200, y: 420, r: 0, s: 0.8 } :
+        key === "diagonal" ? { x: 280, y: 370, r: -20, s: 0.8 } : { x: 305, y: 420, r: 18, s: 0.8 }]);
+    });
     var DEFAULT_ARRANGEMENT = "scattered";
     function arrangementLayouts() {
       var a = CREATE_ARRANGEMENTS[createState.arrangement] || CREATE_ARRANGEMENTS[DEFAULT_ARRANGEMENT];
