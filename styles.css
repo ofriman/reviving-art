@@ -562,3 +562,13 @@ main { position: relative; z-index: 2; }
   .create-layout { grid-template-columns: 1fr 1fr; gap: 4rem; }
   .create-sub { font-size: 1.25rem; }
 }
+
+.shape-chips { margin-bottom: 12px; }
+
+.leaf-dimensions { display: grid; gap: 8px; margin-bottom: 12px; max-width: 290px; margin-right: 0; margin-left: auto; }
+.leaf-dimensions label { display: grid; grid-template-columns: 1fr auto; gap: 4px; color: #8f5e0f; font: 14px/1.4 sans-serif; }
+.leaf-dimensions input { grid-column: 1 / -1; width: 100%; margin: 0; height: 32px; accent-color: #8f5e0f; direction: ltr; }
+.leaf-dimensions output { direction: ltr; }
+
+.create-free-indicator { display: inline-flex; align-items: center; padding: 10px 20px; font: inherit; font-size: 12px; letter-spacing: 2px; border: 1px solid #8f5e0f; background: #8f5e0f; color: #f4eddd; }
+.create-free-indicator[hidden] { display: none; }
