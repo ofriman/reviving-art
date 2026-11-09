@@ -251,7 +251,7 @@
     }
     var LEAF_BODY = "M50 4 C74 28 78 66 50 96 C22 66 26 28 50 4 Z";
     var LEAF_VEIN = "M50 14 L50 86";
-    var createState = { bg: "cream", color: "gold", count: "5", arrangement: DEFAULT_ARRANGEMENT, leaves: null, moved: false, selected: -1 };
+    var createState = { bg: "cream", color: "gold", count: "5", arrangement: DEFAULT_ARRANGEMENT, leaves: null, moved: false, selected: -1, leafColors: [] };
     var rotateGroup = document.querySelector("[data-rotate-group]");
     var createSend = document.querySelector("[data-create-send]");
 
@@ -260,6 +260,7 @@
     function bgLabel() { return isCustom(createState.bg) ? "צבע חופשי " + createState.bg : CREATE_BG[createState.bg].label; }
     function colorLabel() { return isCustom(createState.color) ? "צבע חופשי " + createState.color : CREATE_COLORS[createState.color].label; }
     function leafFill(index) {
+      if (isCustom(createState.leafColors[index])) return createState.leafColors[index];
       if (isCustom(createState.color)) return createState.color;
       if (createState.color === "mixed") return MIXED_SEQUENCE[index % MIXED_SEQUENCE.length];
       return CREATE_COLORS[createState.color].fill;
@@ -287,6 +288,7 @@
     function designLink() {
       var design = { b: createState.bg, c: createState.color, n: createState.count };
       if (createState.arrangement) design.a = createState.arrangement;
+      if (createState.leafColors.some(isCustom)) design.lc = createState.leafColors.slice(0, +createState.count);
       if (createState.moved) {
         design.p = currentLeaves().map(function (L) { return [Math.round(L.x), Math.round(L.y), Math.round(L.r)]; });
       }
@@ -299,7 +301,7 @@
       if (!createSend) return;
       var msg = "שלום ירדנה, אשמח ליצירה בהזמנה אישית:\n" +
         "רקע: " + bgLabel() + "\n" +
-        "צבע עלים: " + colorLabel() + "\n" +
+        "צבע עלים: " + colorLabel() + (createState.leafColors.some(isCustom) ? " (כולל צבעים אישיים בקישור)" : "") + "\n" +
         "מספר עלים: " + createState.count + "\n" +
         "סידור: " + arrangementLabel() + "\n" +
         "העיצוב שבחרתי באתר: " + designLink() + "\n" +
@@ -326,6 +328,7 @@
       }
       parts.push('</svg>');
       createFrame.innerHTML = parts.join("");
+      if (rotateGroup && createState.selected >= 0) rotateGroup.querySelector("[data-leaf-color]").value = leafFill(createState.selected);
       updateSendLink();
     }
 
@@ -356,7 +359,10 @@
           }
         });
       }
-      if (rotateGroup) rotateGroup.hidden = index < 0;
+      if (rotateGroup) {
+        rotateGroup.hidden = index < 0;
+        if (index >= 0) rotateGroup.querySelector("[data-leaf-color]").value = leafFill(index);
+      }
     }
 
     createFrame.addEventListener("pointerdown", function (e) {
@@ -411,6 +417,8 @@
         var chip = e.target.closest(".create-chip");
         if (!chip) return;
         createState[key] = chip.getAttribute("data-value");
+        if (key === "color") createState.leafColors = [];
+        if (key === "count") createState.leafColors = createState.leafColors.slice(0, +createState.count);
         var chips = group.querySelectorAll(".create-chip");
         Array.prototype.forEach.call(chips, function (c) {
           c.setAttribute("aria-pressed", c === chip ? "true" : "false");
@@ -442,11 +450,19 @@
       });
     }
 
+    var leafColorInput = document.querySelector("[data-leaf-color]");
+    if (leafColorInput) leafColorInput.addEventListener("input", function () {
+      if (createState.selected < 0 || !isCustom(leafColorInput.value)) return;
+      createState.leafColors[createState.selected] = leafColorInput.value;
+      renderCreate();
+    });
+
     var customInputs = document.querySelectorAll("[data-create-custom]");
     Array.prototype.forEach.call(customInputs, function (input) {
       input.addEventListener("input", function () {
         var key = input.getAttribute("data-create-custom");
         createState[key] = input.value;
+        if (key === "color") createState.leafColors = [];
         var group = document.querySelector('[data-create-group="' + key + '"]');
         if (group) {
           var chips = group.querySelectorAll(".create-chip");
@@ -483,6 +499,7 @@
         createState.moved = true;
         createState.arrangement = null;
       }
+      if (Array.isArray(d.lc)) createState.leafColors = d.lc.slice(0, +createState.count).map(function (c) { return isCustom(c) ? c : null; });
       Array.prototype.forEach.call(groups, function (group) {
         var key = group.getAttribute("data-create-group");
         var value = createState[key];
