@@ -469,6 +469,7 @@
           };
         });
         createState.moved = true;
+        createState.arrangement = null;
       }
       Array.prototype.forEach.call(groups, function (group) {
         var key = group.getAttribute("data-create-group");
