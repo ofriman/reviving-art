@@ -250,8 +250,25 @@
       return a.layouts[createState.count];
     }
     var LEAF_BODY = "M50 4 C74 28 78 66 50 96 C22 66 26 28 50 4 Z";
-    var LEAF_VEIN = "M50 14 L50 86";
-    var createState = { bg: "cream", color: "gold", count: "5", arrangement: DEFAULT_ARRANGEMENT, leaves: null, moved: false, selected: -1, leafColors: [] };
+    var LEAF_VEIN = "M50 7 Q46 50 50 94";
+    var LEAF_SHAPES = {
+      pointed: { label: "מחודד", body: "M50 3 C61 19 76 22 77 43 C80 65 66 84 50 94 C36 86 23 68 24 48 C23 27 40 19 50 3 Z", width: 27 },
+      broad: { label: "רחב", body: "M50 4 C60 20 83 20 87 44 C93 69 76 87 50 94 C27 88 9 70 14 45 C18 23 40 19 50 4 Z", width: 37 },
+      slender: { label: "מוארך", body: "M50 2 C58 23 66 37 64 56 C63 76 56 89 50 95 C43 86 35 73 36 53 C35 33 45 20 50 2 Z", width: 15 }
+    };
+    function leafDimensions(index) { return createState.leafDimensions[index] || [1,1]; }
+    function clampLeaf(leaf, index) {
+      var d = leafDimensions(index), half = 55 * leaf.s * Math.max(d[0], d[1]);
+      leaf.x = Math.min(400-half, Math.max(half,leaf.x));
+      leaf.y = Math.min(500-half, Math.max(half,leaf.y));
+    }
+    function leafShape(index) { return LEAF_SHAPES[createState.leafShapes[index]] || LEAF_SHAPES.pointed; }
+    function shadeColor(hex, factor) {
+      return "#" + [1,3,5].map(function (i) {
+        return Math.max(0, Math.min(255, Math.round(parseInt(hex.substr(i,2),16) * factor))).toString(16).padStart(2,"0");
+      }).join("");
+    }
+    var createState = { bg: "cream", color: "gold", count: "5", arrangement: DEFAULT_ARRANGEMENT, leaves: null, moved: false, selected: -1, leafColors: [], leafShapes: [], leafDimensions: [] };
     var rotateGroup = document.querySelector("[data-rotate-group]");
     var createSend = document.querySelector("[data-create-send]");
 
@@ -298,6 +315,16 @@
     }
     function isDarkBg() { return luminance(bgFill()) < 110; }
 
+    function updateArrangementMenu() {
+      var group = document.querySelector('[data-create-group="arrangement"]');
+      if (!group) return;
+      group.querySelectorAll(".create-chip").forEach(function (chip) {
+        chip.setAttribute("aria-pressed", chip.getAttribute("data-value") === createState.arrangement ? "true" : "false");
+      });
+      var indicator = group.querySelector("[data-free-indicator]");
+      if (indicator) indicator.hidden = !!createState.arrangement;
+    }
+
     function arrangementLabel() {
       var a = CREATE_ARRANGEMENTS[createState.arrangement];
       return a ? a.label : "חופשי";
@@ -315,6 +342,8 @@
     function designLink() {
       var design = { b: createState.bg, c: createState.color, n: createState.count };
       if (createState.arrangement) design.a = createState.arrangement;
+      if (createState.leafDimensions.some(function (v) { return !!v; })) design.ld = createState.leafDimensions.slice(0, +createState.count);
+      if (createState.leafShapes.some(function (v) { return !!v; })) design.ls = createState.leafShapes.slice(0, +createState.count);
       if (createState.leafColors.some(isCustom)) design.lc = createState.leafColors.slice(0, +createState.count);
       if (createState.moved) {
         design.p = currentLeaves().map(function (L) { return [Math.round(L.x), Math.round(L.y), Math.round(L.r)]; });
@@ -338,6 +367,7 @@
 
     function renderCreate() {
       var leaves = currentLeaves();
+      leaves.forEach(clampLeaf);
       var vein = isDarkBg() ? "rgba(244,237,221,0.55)" : "rgba(90,61,11,0.4)";
       var parts = [];
       parts.push('<svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="הדמיית יצירה">');
@@ -345,17 +375,29 @@
       parts.push('<rect x="14" y="14" width="372" height="472" fill="none" stroke="rgba(143,94,15,0.35)" stroke-width="2"/>');
       for (var i = 0; i < leaves.length; i++) {
         var L = leaves[i];
-        parts.push('<g class="create-leaf' + (i === createState.selected ? " selected" : "") + '" data-index="' + i + '" transform="translate(' + L.x + ' ' + L.y + ') rotate(' + L.r + ') scale(' + L.s + ') translate(-50 -50)">');
+        parts.push('<g class="create-leaf' + (i === createState.selected ? " selected" : "") + '" data-index="' + i + '" transform="translate(' + L.x + ' ' + L.y + ') rotate(' + L.r + ') scale(' + (L.s * leafDimensions(i)[0]) + ' ' + (L.s * leafDimensions(i)[1]) + ') translate(-50 -50)">');
         if (i === createState.selected) {
           parts.push('<circle cx="50" cy="50" r="62" fill="none" stroke="rgba(143,94,15,0.7)" stroke-width="2" stroke-dasharray="6 5"/>');
         }
-        parts.push('<path d="' + LEAF_BODY + '" fill="' + leafFill(i) + '" fill-opacity="0.92" stroke="rgba(90,61,11,0.25)" stroke-width="1.5"/>');
-        parts.push('<path d="' + LEAF_VEIN + '" fill="none" stroke="' + vein + '" stroke-width="2" stroke-linecap="round"/>');
+        var shape = leafShape(i), fill = leafFill(i);
+        var grad = "leaf-metal-" + i;
+        parts.push('<defs><linearGradient id="' + grad + '" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="' + shadeColor(fill,0.62) + '"/><stop offset="0.37" stop-color="' + fill + '"/><stop offset="0.51" stop-color="' + shadeColor(fill,1.28) + '"/><stop offset="0.69" stop-color="' + fill + '"/><stop offset="1" stop-color="' + shadeColor(fill,0.76) + '"/></linearGradient></defs>');
+        parts.push('<path d="' + shape.body + '" fill="url(#' + grad + ')" stroke="' + shadeColor(fill,0.62) + '" stroke-width="0.7"/>');
+        var veins = LEAF_VEIN;
+        for (var v = 1; v < 11; v++) {
+          var y = 10 + v * 7, w = Math.sin((y - 4) / 91 * Math.PI) * shape.width * 0.84;
+          veins += " M49 " + (y+7) + " Q" + (49+w*0.45) + " " + (y+3) + " " + (50+w) + " " + (y-4);
+          veins += " M49 " + (y+7) + " Q" + (49-w*0.45) + " " + (y+3) + " " + (50-w) + " " + (y-4);
+        }
+        parts.push('<path d="' + veins + '" fill="none" stroke="' + shadeColor(fill,0.55) + '" stroke-opacity="0.6" stroke-width="0.65" stroke-linecap="round"/>');
+        parts.push('<path d="M50 94 Q52 100 48 105" fill="none" stroke="' + shadeColor(fill,0.62) + '" stroke-width="1.2" stroke-linecap="round"/>');
         parts.push('</g>');
       }
       parts.push('</svg>');
       createFrame.innerHTML = parts.join("");
       if (rotateGroup && createState.selected >= 0) rotateGroup.querySelector("[data-leaf-color]").value = leafFill(createState.selected);
+      updateShapeMenu();
+      updateArrangementMenu();
       updateColorMenu();
       updateSendLink();
     }
@@ -368,8 +410,20 @@
       pt.x = e.clientX; pt.y = e.clientY;
       return pt.matrixTransform(svg.getScreenCTM().inverse());
     }
+    function updateShapeMenu() {
+      var selected = createState.selected;
+      document.querySelectorAll("[data-leaf-dimension]").forEach(function (input) {
+        var dimension = +input.getAttribute("data-leaf-dimension");
+        input.value = Math.round(leafDimensions(selected)[dimension] * 100);
+        input.parentNode.querySelector("output").textContent = input.value + "%";
+      });
+      document.querySelectorAll("[data-leaf-shape]").forEach(function (button) {
+        button.setAttribute("aria-pressed", selected >= 0 && button.getAttribute("data-leaf-shape") === (createState.leafShapes[selected] || "pointed") ? "true" : "false");
+      });
+    }
     function selectLeaf(index) {
       createState.selected = index;
+      updateShapeMenu();
       var svg = createSvg();
       if (svg) {
         Array.prototype.forEach.call(svg.querySelectorAll(".create-leaf"), function (g) {
@@ -412,7 +466,8 @@
       if (!svg) return;
       var p = svgPoint(svg, e);
       var leaf = currentLeaves()[dragIndex];
-      var half = 55 * leaf.s; /* rotation-aware extent: whole leaf stays inside the frame at any angle */
+      var dimensions = leafDimensions(dragIndex);
+      var half = 55 * leaf.s * Math.max(dimensions[0], dimensions[1]); /* rotation-aware extent: whole leaf stays inside the frame at any angle */
       leaf.x = Math.min(400 - half, Math.max(half, p.x - dragDX));
       leaf.y = Math.min(500 - half, Math.max(half, p.y - dragDY));
       if (!createState.moved) {
@@ -421,8 +476,9 @@
         Array.prototype.forEach.call(aChips, function (c) { c.setAttribute("aria-pressed", "false"); });
       }
       createState.moved = true;
+      updateArrangementMenu();
       var g = svg.querySelector('[data-index="' + dragIndex + '"]');
-      if (g) g.setAttribute("transform", "translate(" + leaf.x + " " + leaf.y + ") rotate(" + leaf.r + ") scale(" + leaf.s + ") translate(-50 -50)");
+      if (g) g.setAttribute("transform", "translate(" + leaf.x + " " + leaf.y + ") rotate(" + leaf.r + ") scale(" + (leaf.s * leafDimensions(dragIndex)[0]) + " " + (leaf.s * leafDimensions(dragIndex)[1]) + ") translate(-50 -50)");
       e.preventDefault();
     });
     function endDrag() {
@@ -446,7 +502,7 @@
         if (!chip) return;
         createState[key] = chip.getAttribute("data-value");
         if (key === "color") createState.leafColors = [];
-        if (key === "count") createState.leafColors = createState.leafColors.slice(0, +createState.count);
+        if (key === "count") { createState.leafColors = createState.leafColors.slice(0, +createState.count); createState.leafShapes = createState.leafShapes.slice(0, +createState.count); createState.leafDimensions = createState.leafDimensions.slice(0, +createState.count); }
         var chips = group.querySelectorAll(".create-chip");
         Array.prototype.forEach.call(chips, function (c) {
           c.setAttribute("aria-pressed", c === chip ? "true" : "false");
@@ -460,23 +516,46 @@
 
     if (rotateGroup) {
       rotateGroup.addEventListener("click", function (e) {
+        var shapeButton = e.target.closest("[data-leaf-shape]");
+        if (shapeButton && createState.selected >= 0 && LEAF_SHAPES[shapeButton.getAttribute("data-leaf-shape")]) {
+          createState.leafShapes[createState.selected] = shapeButton.getAttribute("data-leaf-shape");
+          renderCreate();
+          return;
+        }
         var btn = e.target.closest("[data-rotate]");
         if (!btn || createState.selected < 0) return;
         var leaf = currentLeaves()[createState.selected];
         if (!leaf) return;
         leaf.r += +btn.getAttribute("data-rotate");
+        clampLeaf(leaf, createState.selected);
         if (!createState.moved) {
           createState.arrangement = null;
           var aChips = document.querySelectorAll('[data-create-group="arrangement"] .create-chip');
           Array.prototype.forEach.call(aChips, function (c) { c.setAttribute("aria-pressed", "false"); });
         }
         createState.moved = true;
+        updateArrangementMenu();
         var svg = createSvg();
         var g = svg && svg.querySelector('[data-index="' + createState.selected + '"]');
-        if (g) g.setAttribute("transform", "translate(" + leaf.x + " " + leaf.y + ") rotate(" + leaf.r + ") scale(" + leaf.s + ") translate(-50 -50)");
+        if (g) g.setAttribute("transform", "translate(" + leaf.x + " " + leaf.y + ") rotate(" + leaf.r + ") scale(" + (leaf.s * leafDimensions(createState.selected)[0]) + " " + (leaf.s * leafDimensions(createState.selected)[1]) + ") translate(-50 -50)");
         updateSendLink();
       });
     }
+
+    document.querySelectorAll("[data-leaf-dimension]").forEach(function (input) {
+      input.addEventListener("input", function () {
+        var index = createState.selected;
+        if (index < 0) return;
+        var dimensions = leafDimensions(index).slice();
+        dimensions[+input.getAttribute("data-leaf-dimension")] = Math.max(0.6, Math.min(1.5, +input.value / 100));
+        createState.leafDimensions[index] = dimensions;
+        clampLeaf(currentLeaves()[index], index);
+        createState.moved = true;
+        createState.arrangement = null;
+        document.querySelectorAll('[data-create-group="arrangement"] .create-chip').forEach(function (c) { c.setAttribute("aria-pressed","false"); });
+        renderCreate();
+      });
+    });
 
     var leafColorInput = document.querySelector("[data-leaf-color]");
     if (leafColorInput) leafColorInput.addEventListener("input", function () {
@@ -514,10 +593,13 @@
       if (CREATE_COLORS[d.c] || isCustom(d.c)) createState.color = d.c;
       if (CREATE_ARRANGEMENTS[DEFAULT_ARRANGEMENT].layouts[d.n]) createState.count = d.n;
       if (CREATE_ARRANGEMENTS[d.a]) createState.arrangement = d.a;
+      if (Array.isArray(d.ld)) createState.leafDimensions = d.ld.slice(0, +createState.count).map(function (v) {
+        return Array.isArray(v) && v.length === 2 && v.every(function (n) { return Number.isFinite(n); }) ? v.map(function (n) { return Math.max(0.6, Math.min(1.5,n)); }) : null;
+      });
       var layout = arrangementLayouts();
       if (d.p && d.p.length === layout.length) {
         createState.leaves = layout.map(function (L, i) {
-          var s = L.s, half = 55 * s;
+          var s = L.s, dimensions = leafDimensions(i), half = 55 * s * Math.max(dimensions[0], dimensions[1]);
           return {
             x: Math.min(400 - half, Math.max(half, +d.p[i][0] || L.x)),
             y: Math.min(500 - half, Math.max(half, +d.p[i][1] || L.y)),
@@ -527,6 +609,7 @@
         createState.moved = true;
         createState.arrangement = null;
       }
+      if (Array.isArray(d.ls)) createState.leafShapes = d.ls.slice(0, +createState.count).map(function (v) { return LEAF_SHAPES[v] ? v : null; });
       if (Array.isArray(d.lc)) createState.leafColors = d.lc.slice(0, +createState.count).map(function (c) { return isCustom(c) ? c : null; });
       Array.prototype.forEach.call(groups, function (group) {
         var key = group.getAttribute("data-create-group");
