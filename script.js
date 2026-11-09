@@ -258,7 +258,34 @@
     function isCustom(v) { return typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v); }
     function bgFill() { return isCustom(createState.bg) ? createState.bg : CREATE_BG[createState.bg].fill; }
     function bgLabel() { return isCustom(createState.bg) ? "צבע חופשי " + createState.bg : CREATE_BG[createState.bg].label; }
-    function colorLabel() { return isCustom(createState.color) ? "צבע חופשי " + createState.color : CREATE_COLORS[createState.color].label; }
+    /* Describe visible colors without changing the underlying palette or overrides. */
+    function visibleColor() {
+      var first = leafFill(0).toLowerCase();
+      for (var i = 1; i < +createState.count; i++) {
+        if (leafFill(i).toLowerCase() !== first) return "mixed";
+      }
+      var keys = Object.keys(CREATE_COLORS);
+      for (var j = 0; j < keys.length; j++) {
+        if (CREATE_COLORS[keys[j]].fill === first) return keys[j];
+      }
+      return first;
+    }
+    function colorLabel() {
+      var color = visibleColor();
+      return isCustom(color) ? "צבע חופשי " + color : CREATE_COLORS[color].label;
+    }
+    function updateColorMenu() {
+      var group = document.querySelector('[data-create-group="color"]');
+      if (!group) return;
+      var color = visibleColor();
+      Array.prototype.forEach.call(group.querySelectorAll(".create-chip"), function (chip) {
+        chip.setAttribute("aria-pressed", chip.getAttribute("data-value") === color ? "true" : "false");
+      });
+      var wrap = group.querySelector("[data-custom-wrap]");
+      if (wrap) wrap.classList.toggle("is-active", isCustom(color));
+      var input = group.querySelector("[data-create-custom]");
+      if (input && isCustom(color)) input.value = color;
+    }
     function leafFill(index) {
       if (isCustom(createState.leafColors[index])) return createState.leafColors[index];
       if (isCustom(createState.color)) return createState.color;
@@ -329,6 +356,7 @@
       parts.push('</svg>');
       createFrame.innerHTML = parts.join("");
       if (rotateGroup && createState.selected >= 0) rotateGroup.querySelector("[data-leaf-color]").value = leafFill(createState.selected);
+      updateColorMenu();
       updateSendLink();
     }
 
