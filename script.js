@@ -176,61 +176,221 @@
       mixed:   { fill: null,      label: "מעורב" }
     };
     var MIXED_SEQUENCE = ["#d19a2a", "#b8b8c2", "#7d8b5e"];
-    var CREATE_LAYOUTS = {
-      3: [ { x: 200, y: 250, r: 0,   s: 1.5 },
-           { x: 128, y: 138, r: -24, s: 1.0 },
-           { x: 282, y: 366, r: 28,  s: 1.0 } ],
-      5: [ { x: 200, y: 130, r: -8,  s: 1.1 },
-           { x: 116, y: 244, r: 24,  s: 1.1 },
-           { x: 284, y: 250, r: -28, s: 1.1 },
-           { x: 168, y: 372, r: 14,  s: 1.1 },
-           { x: 264, y: 376, r: -16, s: 0.85 } ],
-      7: [ { x: 200, y: 110, r: -6,  s: 1.0 },
-           { x: 112, y: 190, r: 26,  s: 0.95 },
-           { x: 288, y: 196, r: -26, s: 0.95 },
-           { x: 200, y: 268, r: 4,   s: 1.15 },
-           { x: 122, y: 340, r: -18, s: 0.9 },
-           { x: 282, y: 346, r: 20,  s: 0.9 },
-           { x: 200, y: 420, r: -4,  s: 0.8 } ]
+    /* arrangement presets derived from visible gallery compositions:
+       scattered - loose scatter (Ambra / Perla / Alba), central - one large center leaf
+       with satellites (Olea), diagonal - rising diagonal (Gemini / Prima / Silva) */
+    var CREATE_ARRANGEMENTS = {
+      scattered: { label: "מפוזר", layouts: {
+        3: [ { x: 200, y: 250, r: 0,   s: 1.5 },
+             { x: 128, y: 138, r: -24, s: 1.0 },
+             { x: 282, y: 366, r: 28,  s: 1.0 } ],
+        5: [ { x: 200, y: 130, r: -8,  s: 1.1 },
+             { x: 116, y: 244, r: 24,  s: 1.1 },
+             { x: 284, y: 250, r: -28, s: 1.1 },
+             { x: 168, y: 372, r: 14,  s: 1.1 },
+             { x: 264, y: 376, r: -16, s: 0.85 } ],
+        7: [ { x: 200, y: 110, r: -6,  s: 1.0 },
+             { x: 112, y: 190, r: 26,  s: 0.95 },
+             { x: 288, y: 196, r: -26, s: 0.95 },
+             { x: 200, y: 268, r: 4,   s: 1.15 },
+             { x: 122, y: 340, r: -18, s: 0.9 },
+             { x: 282, y: 346, r: 20,  s: 0.9 },
+             { x: 200, y: 420, r: -4,  s: 0.8 } ]
+      } },
+      central: { label: "מרכזי", layouts: {
+        3: [ { x: 200, y: 250, r: 0,   s: 1.6 },
+             { x: 118, y: 140, r: -18, s: 0.9 },
+             { x: 284, y: 366, r: 22,  s: 0.9 } ],
+        5: [ { x: 200, y: 255, r: 0,   s: 1.6 },
+             { x: 106, y: 122, r: -16, s: 0.9 },
+             { x: 298, y: 126, r: 16,  s: 0.9 },
+             { x: 110, y: 392, r: -20, s: 0.9 },
+             { x: 294, y: 388, r: 20,  s: 0.9 } ],
+        7: [ { x: 200, y: 250, r: 0,   s: 1.5 },
+             { x: 102, y: 112, r: -14, s: 0.9 },
+             { x: 298, y: 112, r: 14,  s: 0.9 },
+             { x: 92,  y: 252, r: -24, s: 0.9 },
+             { x: 308, y: 252, r: 24,  s: 0.9 },
+             { x: 108, y: 394, r: -18, s: 0.9 },
+             { x: 292, y: 394, r: 18,  s: 0.9 } ]
+      } },
+      diagonal: { label: "אלכסון", layouts: {
+        3: [ { x: 112, y: 378, r: -22, s: 1.1 },
+             { x: 200, y: 250, r: -8,  s: 1.2 },
+             { x: 288, y: 122, r: -30, s: 1.1 } ],
+        5: [ { x: 96,  y: 402, r: -18, s: 0.95 },
+             { x: 148, y: 322, r: -26, s: 1.0 },
+             { x: 206, y: 246, r: -6,  s: 1.1 },
+             { x: 266, y: 172, r: -22, s: 1.0 },
+             { x: 316, y: 100, r: -32, s: 0.95 } ],
+        7: [ { x: 84,  y: 412, r: -16, s: 0.85 },
+             { x: 124, y: 344, r: -24, s: 0.9 },
+             { x: 164, y: 282, r: -10, s: 0.95 },
+             { x: 206, y: 226, r: -28, s: 1.05 },
+             { x: 246, y: 172, r: -12, s: 0.95 },
+             { x: 286, y: 122, r: -26, s: 0.9 },
+             { x: 324, y: 76,  r: -34, s: 0.85 } ]
+      } }
     };
+    var DEFAULT_ARRANGEMENT = "scattered";
+    function arrangementLayouts() {
+      var a = CREATE_ARRANGEMENTS[createState.arrangement] || CREATE_ARRANGEMENTS[DEFAULT_ARRANGEMENT];
+      return a.layouts[createState.count];
+    }
     var LEAF_BODY = "M50 4 C74 28 78 66 50 96 C22 66 26 28 50 4 Z";
     var LEAF_VEIN = "M50 14 L50 86";
-    var createState = { bg: "cream", color: "gold", count: "5" };
+    var createState = { bg: "cream", color: "gold", count: "5", arrangement: DEFAULT_ARRANGEMENT, leaves: null, moved: false, selected: -1 };
+    var rotateGroup = document.querySelector("[data-rotate-group]");
     var createSend = document.querySelector("[data-create-send]");
 
+    function isCustom(v) { return typeof v === "string" && /^#[0-9a-fA-F]{6}$/.test(v); }
+    function bgFill() { return isCustom(createState.bg) ? createState.bg : CREATE_BG[createState.bg].fill; }
+    function bgLabel() { return isCustom(createState.bg) ? "צבע חופשי " + createState.bg : CREATE_BG[createState.bg].label; }
+    function colorLabel() { return isCustom(createState.color) ? "צבע חופשי " + createState.color : CREATE_COLORS[createState.color].label; }
     function leafFill(index) {
+      if (isCustom(createState.color)) return createState.color;
       if (createState.color === "mixed") return MIXED_SEQUENCE[index % MIXED_SEQUENCE.length];
       return CREATE_COLORS[createState.color].fill;
     }
+    function luminance(hex) {
+      var r = parseInt(hex.substr(1, 2), 16), g = parseInt(hex.substr(3, 2), 16), b = parseInt(hex.substr(5, 2), 16);
+      return 0.299 * r + 0.587 * g + 0.114 * b;
+    }
+    function isDarkBg() { return luminance(bgFill()) < 110; }
+
+    function arrangementLabel() {
+      var a = CREATE_ARRANGEMENTS[createState.arrangement];
+      return a ? a.label : "חופשי";
+    }
+
+    function currentLeaves() {
+      if (!createState.leaves || createState.leaves.length !== +createState.count) {
+        createState.leaves = arrangementLayouts().map(function (L) {
+          return { x: L.x, y: L.y, r: L.r, s: L.s };
+        });
+      }
+      return createState.leaves;
+    }
+
+    function designLink() {
+      var design = { b: createState.bg, c: createState.color, n: createState.count };
+      if (createState.arrangement) design.a = createState.arrangement;
+      if (createState.moved) {
+        design.p = currentLeaves().map(function (L) { return [Math.round(L.x), Math.round(L.y), Math.round(L.r)]; });
+      }
+      var param = btoa(unescape(encodeURIComponent(JSON.stringify(design))))
+        .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+      return "https://www.reviving-art.com/?d=" + param + "#create";
+    }
+
+    function updateSendLink() {
+      if (!createSend) return;
+      var msg = "שלום ירדנה, אשמח ליצירה בהזמנה אישית:\n" +
+        "רקע: " + bgLabel() + "\n" +
+        "צבע עלים: " + colorLabel() + "\n" +
+        "מספר עלים: " + createState.count + "\n" +
+        "סידור: " + arrangementLabel() + "\n" +
+        "העיצוב שבחרתי באתר: " + designLink() + "\n" +
+        "(התמונה באתר להמחשה בלבד — אשמח לשמוע פרטים)";
+      createSend.href = "https://wa.me/972555564471?text=" + encodeURIComponent(msg).replace(/%20/g, "+");
+    }
 
     function renderCreate() {
-      var bg = CREATE_BG[createState.bg].fill;
-      var layout = CREATE_LAYOUTS[createState.count];
+      var leaves = currentLeaves();
+      var vein = isDarkBg() ? "rgba(244,237,221,0.55)" : "rgba(90,61,11,0.4)";
       var parts = [];
       parts.push('<svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="הדמיית יצירה">');
-      parts.push('<rect width="400" height="500" fill="' + bg + '"/>');
+      parts.push('<rect width="400" height="500" fill="' + bgFill() + '"/>');
       parts.push('<rect x="14" y="14" width="372" height="472" fill="none" stroke="rgba(143,94,15,0.35)" stroke-width="2"/>');
-      for (var i = 0; i < layout.length; i++) {
-        var L = layout[i];
-        var fill = leafFill(i);
-        var vein = createState.bg === "black" || createState.bg === "bordeaux" ? "rgba(244,237,221,0.55)" : "rgba(90,61,11,0.4)";
-        parts.push('<g transform="translate(' + L.x + ' ' + L.y + ') rotate(' + L.r + ') scale(' + L.s + ') translate(-50 -50)">');
-        parts.push('<path d="' + LEAF_BODY + '" fill="' + fill + '" fill-opacity="0.92" stroke="rgba(90,61,11,0.25)" stroke-width="1.5"/>');
+      for (var i = 0; i < leaves.length; i++) {
+        var L = leaves[i];
+        parts.push('<g class="create-leaf' + (i === createState.selected ? " selected" : "") + '" data-index="' + i + '" transform="translate(' + L.x + ' ' + L.y + ') rotate(' + L.r + ') scale(' + L.s + ') translate(-50 -50)">');
+        if (i === createState.selected) {
+          parts.push('<circle cx="50" cy="50" r="62" fill="none" stroke="rgba(143,94,15,0.7)" stroke-width="2" stroke-dasharray="6 5"/>');
+        }
+        parts.push('<path d="' + LEAF_BODY + '" fill="' + leafFill(i) + '" fill-opacity="0.92" stroke="rgba(90,61,11,0.25)" stroke-width="1.5"/>');
         parts.push('<path d="' + LEAF_VEIN + '" fill="none" stroke="' + vein + '" stroke-width="2" stroke-linecap="round"/>');
         parts.push('</g>');
       }
       parts.push('</svg>');
       createFrame.innerHTML = parts.join("");
-
-      if (createSend) {
-        var msg = "שלום ירדנה, אשמח ליצירה בהזמנה אישית:\n" +
-          "רקע: " + CREATE_BG[createState.bg].label + "\n" +
-          "צבע עלים: " + CREATE_COLORS[createState.color].label + "\n" +
-          "מספר עלים: " + createState.count + "\n" +
-          "(התמונה באתר להמחשה בלבד — אשמח לשמוע פרטים)";
-        createSend.href = "https://wa.me/972555564471?text=" + encodeURIComponent(msg).replace(/%20/g, "+");
-      }
+      updateSendLink();
     }
+
+    /* drag leaves (mouse + touch via pointer events) */
+    var dragIndex = -1, dragDX = 0, dragDY = 0;
+    function createSvg() { return createFrame.querySelector("svg"); }
+    function svgPoint(svg, e) {
+      var pt = svg.createSVGPoint();
+      pt.x = e.clientX; pt.y = e.clientY;
+      return pt.matrixTransform(svg.getScreenCTM().inverse());
+    }
+    function selectLeaf(index) {
+      createState.selected = index;
+      var svg = createSvg();
+      if (svg) {
+        Array.prototype.forEach.call(svg.querySelectorAll(".create-leaf"), function (g) {
+          var isSel = +g.getAttribute("data-index") === index;
+          g.classList.toggle("selected", isSel);
+          var ring = g.querySelector("circle");
+          if (isSel && !ring) {
+            var c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            c.setAttribute("cx", "50"); c.setAttribute("cy", "50"); c.setAttribute("r", "62");
+            c.setAttribute("fill", "none"); c.setAttribute("stroke", "rgba(143,94,15,0.7)");
+            c.setAttribute("stroke-width", "2"); c.setAttribute("stroke-dasharray", "6 5");
+            g.insertBefore(c, g.firstChild);
+          } else if (!isSel && ring) {
+            ring.parentNode.removeChild(ring);
+          }
+        });
+      }
+      if (rotateGroup) rotateGroup.hidden = index < 0;
+    }
+
+    createFrame.addEventListener("pointerdown", function (e) {
+      var g = e.target && e.target.closest ? e.target.closest(".create-leaf") : null;
+      var svg = createSvg();
+      if (!g || !svg) { selectLeaf(-1); return; }
+      dragIndex = +g.getAttribute("data-index");
+      selectLeaf(dragIndex);
+      var p = svgPoint(svg, e);
+      var leaf = currentLeaves()[dragIndex];
+      dragDX = p.x - leaf.x; dragDY = p.y - leaf.y;
+      g.classList.add("dragging");
+      try { createFrame.setPointerCapture(e.pointerId); } catch (err) {}
+      e.preventDefault();
+    });
+    createFrame.addEventListener("pointermove", function (e) {
+      if (dragIndex < 0) return;
+      var svg = createSvg();
+      if (!svg) return;
+      var p = svgPoint(svg, e);
+      var leaf = currentLeaves()[dragIndex];
+      var half = 55 * leaf.s; /* rotation-aware extent: whole leaf stays inside the frame at any angle */
+      leaf.x = Math.min(400 - half, Math.max(half, p.x - dragDX));
+      leaf.y = Math.min(500 - half, Math.max(half, p.y - dragDY));
+      if (!createState.moved) {
+        createState.arrangement = null;
+        var aChips = document.querySelectorAll('[data-create-group="arrangement"] .create-chip');
+        Array.prototype.forEach.call(aChips, function (c) { c.setAttribute("aria-pressed", "false"); });
+      }
+      createState.moved = true;
+      var g = svg.querySelector('[data-index="' + dragIndex + '"]');
+      if (g) g.setAttribute("transform", "translate(" + leaf.x + " " + leaf.y + ") rotate(" + leaf.r + ") scale(" + leaf.s + ") translate(-50 -50)");
+      e.preventDefault();
+    });
+    function endDrag() {
+      if (dragIndex < 0) return;
+      dragIndex = -1;
+      var svg = createSvg();
+      if (svg) {
+        var dragging = svg.querySelectorAll(".dragging");
+        Array.prototype.forEach.call(dragging, function (g) { g.classList.remove("dragging"); });
+      }
+      updateSendLink();
+    }
+    createFrame.addEventListener("pointerup", endDrag);
+    createFrame.addEventListener("pointercancel", endDrag);
 
     var groups = document.querySelectorAll("[data-create-group]");
     Array.prototype.forEach.call(groups, function (group) {
@@ -243,9 +403,86 @@
         Array.prototype.forEach.call(chips, function (c) {
           c.setAttribute("aria-pressed", c === chip ? "true" : "false");
         });
+        var wrap = group.querySelector("[data-custom-wrap]");
+        if (wrap) wrap.classList.remove("is-active");
+        if (key === "count" || key === "arrangement") { createState.leaves = null; createState.moved = false; selectLeaf(-1); }
         renderCreate();
       });
     });
+
+    if (rotateGroup) {
+      rotateGroup.addEventListener("click", function (e) {
+        var btn = e.target.closest("[data-rotate]");
+        if (!btn || createState.selected < 0) return;
+        var leaf = currentLeaves()[createState.selected];
+        if (!leaf) return;
+        leaf.r += +btn.getAttribute("data-rotate");
+        if (!createState.moved) {
+          createState.arrangement = null;
+          var aChips = document.querySelectorAll('[data-create-group="arrangement"] .create-chip');
+          Array.prototype.forEach.call(aChips, function (c) { c.setAttribute("aria-pressed", "false"); });
+        }
+        createState.moved = true;
+        var svg = createSvg();
+        var g = svg && svg.querySelector('[data-index="' + createState.selected + '"]');
+        if (g) g.setAttribute("transform", "translate(" + leaf.x + " " + leaf.y + ") rotate(" + leaf.r + ") scale(" + leaf.s + ") translate(-50 -50)");
+        updateSendLink();
+      });
+    }
+
+    var customInputs = document.querySelectorAll("[data-create-custom]");
+    Array.prototype.forEach.call(customInputs, function (input) {
+      input.addEventListener("input", function () {
+        var key = input.getAttribute("data-create-custom");
+        createState[key] = input.value;
+        var group = document.querySelector('[data-create-group="' + key + '"]');
+        if (group) {
+          var chips = group.querySelectorAll(".create-chip");
+          Array.prototype.forEach.call(chips, function (c) { c.setAttribute("aria-pressed", "false"); });
+          var wrap = group.querySelector("[data-custom-wrap]");
+          if (wrap) wrap.classList.add("is-active");
+        }
+        renderCreate();
+      });
+    });
+
+    /* restore a design shared via link (?d=...) */
+    (function applyDesignParam() {
+      var m = /[?&]d=([A-Za-z0-9_-]+)/.exec(location.search);
+      if (!m) return;
+      var d;
+      try {
+        d = JSON.parse(decodeURIComponent(escape(atob(m[1].replace(/-/g, "+").replace(/_/g, "/")))));
+      } catch (e) { return; }
+      if (CREATE_BG[d.b] || isCustom(d.b)) createState.bg = d.b;
+      if (CREATE_COLORS[d.c] || isCustom(d.c)) createState.color = d.c;
+      if (CREATE_ARRANGEMENTS[DEFAULT_ARRANGEMENT].layouts[d.n]) createState.count = d.n;
+      if (CREATE_ARRANGEMENTS[d.a]) createState.arrangement = d.a;
+      var layout = arrangementLayouts();
+      if (d.p && d.p.length === layout.length) {
+        createState.leaves = layout.map(function (L, i) {
+          var s = L.s, half = 55 * s;
+          return {
+            x: Math.min(400 - half, Math.max(half, +d.p[i][0] || L.x)),
+            y: Math.min(500 - half, Math.max(half, +d.p[i][1] || L.y)),
+            r: isFinite(+d.p[i][2]) ? +d.p[i][2] : L.r, s: s
+          };
+        });
+        createState.moved = true;
+      }
+      Array.prototype.forEach.call(groups, function (group) {
+        var key = group.getAttribute("data-create-group");
+        var value = createState[key];
+        var chips = group.querySelectorAll(".create-chip");
+        Array.prototype.forEach.call(chips, function (c) {
+          c.setAttribute("aria-pressed", c.getAttribute("data-value") === value ? "true" : "false");
+        });
+        var wrap = group.querySelector("[data-custom-wrap]");
+        if (wrap) wrap.classList.toggle("is-active", isCustom(value));
+        var input = group.querySelector("[data-create-custom]");
+        if (input && isCustom(value)) input.value = value;
+      });
+    })();
 
     renderCreate();
   }
