@@ -529,6 +529,33 @@ main { position: relative; z-index: 2; }
   opacity: 0.75;
 }
 
+.create-custom {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid rgba(143, 94, 15, 0.4);
+  color: var(--gold);
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: color 0.3s, border-color 0.3s, background-color 0.3s;
+}
+.create-custom:hover { color: var(--gold-bright); border-color: var(--gold); }
+.create-custom.is-active { background: var(--gold); border-color: var(--gold); color: var(--bg); }
+.create-custom input[type="color"] {
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.create-leaf { cursor: grab; touch-action: none; }
+.create-leaf.dragging { cursor: grabbing; }
+
 .create-send { margin-top: 0.5rem; }
 
 @media (min-width: 768px) {
